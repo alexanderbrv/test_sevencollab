@@ -1,0 +1,33 @@
+version: '3.9'
+services:
+  postgres:
+    image: postgres:13.3
+    environment:
+      POSTGRES_DB: "sevencollab"
+      POSTGRES_USER: "dbpgsevencollab"
+      POSTGRES_PASSWORD: "pgpwd4sevencollab"
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    volumes:
+      - ../2. Init Database:/docker-entrypoint-initdb.d
+      - .:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+  php-fpm:
+    build: docker/php
+    links:
+      - postgres
+    volumes:
+      - "./app:/app"
+
+  nginx:
+    build: docker/nginx-dev
+    volumes:
+      - "./app:/app"
+      - "./docker/nginx-dev/vhost.conf:/etc/nginx/conf.d/default.conf"
+      - "./docker/nginx-dev/nginx.conf:/etc/nginx/nginx.conf"
+    links:
+      - php-fpm
+    ports:
+      - "8015:80"
