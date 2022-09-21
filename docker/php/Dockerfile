@@ -17,10 +17,11 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     libxml2-dev \
     libxslt-dev \
+    libpq-dev \
     openssl \
     && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
-    && docker-php-ext-install -j$(nproc) gd \
-    && docker-php-ext-install -j$(nproc) zip intl pdo_mysql bcmath soap sockets xsl \
+    && docker-php-ext-install -j$(nproc) gd zip intl bcmath soap sockets xsl \
+    && docker-php-ext-install pdo pdo_pgsql pgsql \
     && docker-php-ext-install exif \
     && rm -rf /var/lib/apt/lists/*
 
